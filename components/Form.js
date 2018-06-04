@@ -42,10 +42,10 @@ class Form extends Component {
     const { onSubmit } = this.props
     const { text } = this.state
 
-    if (!text) return
-
-    onSubmit(text)
-    this.setState({ text: '' })
+    if (text) {
+      onSubmit(text)
+      this.setState({ text: '' })
+    }
   }
 
   render () {
