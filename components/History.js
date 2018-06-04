@@ -1,6 +1,7 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
-import data from '../utils/data'
+import PropTypes from 'prop-types'
+import { formatDate } from '../utils/helpers'
 
 const styles = StyleSheet.create({
   container: {
@@ -53,35 +54,44 @@ const renderHeader = () => (
   </View>
 )
 
-const renderRow = ({ id, date, location, aqi, rating, description }) => (
-  <View key={id} style={styles.row}>
-    <View style={styles.cell}>
-      <Text>{date}</Text>
-    </View>
-    <View style={styles.cell}>
-      <Text>{location}</Text>
-    </View>
-    <View style={styles.cell}>
-      <View style={[styles.circle, { backgroundColor: rating }]}>
-        <View style={styles.aqi}>
-          <Text>{aqi}</Text>
+const renderRow = (item) => {
+  const { id, location, aqi, color, description } = item
+  const date = formatDate(item.date)
+
+  return (
+    <View key={id} style={styles.row}>
+      <View style={styles.cell}>
+        <Text>{date}</Text>
+      </View>
+      <View style={styles.cell}>
+        <Text>{location}</Text>
+      </View>
+      <View style={styles.cell}>
+        <View style={[styles.circle, { backgroundColor: color }]}>
+          <View style={styles.aqi}>
+            <Text>{aqi}</Text>
+          </View>
         </View>
       </View>
+      <View style={styles.cell}>
+        <Text>{description}</Text>
+      </View>
     </View>
-    <View style={styles.cell}>
-      <Text>{description}</Text>
-    </View>
-  </View>
-)
+  )
+}
 
-const History = () => (
+const History = ({ data }) => (
   <View style={styles.container}>
     <Text style={styles.header}>Recent Searches</Text>
     { renderHeader() }
     <View>
-      { data.searches.map(item => renderRow(item)) }
+      { data.map(item => renderRow(item)) }
     </View>
   </View>
 )
+
+History.propTypes = {
+  data: PropTypes.array
+}
 
 export default History
