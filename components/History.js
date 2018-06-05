@@ -1,7 +1,8 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import PropTypes from 'prop-types'
 import { formatDate } from '../utils/helpers'
+import { dangerRed, white } from '../utils/colors'
 
 const styles = StyleSheet.create({
   container: {
@@ -34,6 +35,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  resetBtn: {
+    backgroundColor: dangerRed,
+    padding: 10,
+    borderRadius: 4,
+    height: 40,
+    marginTop: 30,
+    marginLeft: 40,
+    marginRight: 40
+  },
+  resetBtnText: {
+    color: white,
+    textAlign: 'center'
   }
 })
 
@@ -80,18 +94,25 @@ const renderRow = (item) => {
   )
 }
 
-const History = ({ data }) => (
+const History = ({ data, handleReset }) => (
   <View style={styles.container}>
     <Text style={styles.header}>Recent Searches</Text>
     { renderHeader() }
     <View>
       { data.map(item => renderRow(item)) }
     </View>
+    <TouchableOpacity
+      style={styles.resetBtn}
+      onPress={handleReset}
+    >
+      <Text style={styles.resetBtnText}>Reset</Text>
+    </TouchableOpacity>
   </View>
 )
 
 History.propTypes = {
-  data: PropTypes.array
+  data: PropTypes.array.isRequired,
+  handleReset: PropTypes.func.isRequired
 }
 
 export default History

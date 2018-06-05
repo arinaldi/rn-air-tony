@@ -4,8 +4,9 @@ import AppStatusBar from './components/AppStatusBar'
 import Form from './components/Form'
 import History from './components/History'
 import { white, green, red, black } from './utils/colors'
+import { getHistory, saveToHistory, clearHistory } from './utils/helpers'
 import { geocodeGoogle, breezoMeter } from './api'
-import { ERROR_GENERIC, ERROR_LOCATION, SUCCESS_SEARCH } from './constants'
+import { APP_STATUSES, DATA_STATUSES } from './constants'
 
 const styles = StyleSheet.create({
   container: {
@@ -31,9 +32,16 @@ const styles = StyleSheet.create({
 
 export default class App extends React.Component {
   state = {
-    status: 'Search air quality by location',
+    status: APP_STATUSES.DEFAULT,
     color: black,
     searches: []
+  }
+
+  componentDidMount () {
+    getHistory()
+      .then(searches => {
+        this.setState({ searches })
+      })
   }
 
   fetchData (location) {
@@ -42,14 +50,14 @@ export default class App extends React.Component {
     geocodeGoogle(location)
       .then(data => {
         switch (data.status) {
-          case 'OK':
+          case DATA_STATUSES.OK:
             return data
-          case 'ZERO_RESULTS':
-            return Promise.reject({ message: ERROR_LOCATION })
-          case 'REQUEST_DENIED':
+          case DATA_STATUSES.ZERO_RESULTS:
+            return Promise.reject({ message: APP_STATUSES.ERROR_LOCATION })
+          case DATA_STATUSES.REQUEST_DENIED:
             return Promise.reject({ message: data.error_message })
           default:
-            return Promise.reject({ message: ERROR_GENERIC })
+            return Promise.reject({ message: APP_STATUSES.ERROR_GENERIC })
         }
       })
       .then(data => breezoMeter(data))
@@ -59,15 +67,15 @@ export default class App extends React.Component {
         } else {
           const newData = [data, ...searches.slice(0, 4)]
           this.setState({
-            status: SUCCESS_SEARCH,
+            status: APP_STATUSES.SUCCESS_SEARCH,
             color: green,
             searches: newData
           })
-          // TODO: save data to asyncstorage
+          saveToHistory(newData)
         }
       })
       .catch((err) => {
-        const error = err.message ? err.message : ERROR_GENERIC
+        const error = err.message ? err.message : APP_STATUSES.ERROR_GENERIC
         this.setState({ status: error, color: red })
       })
   }
@@ -77,6 +85,15 @@ export default class App extends React.Component {
       { status: `Searching for ${location}...`, color: black },
       this.fetchData(location)
     )
+  }
+
+  handleReset = () => {
+    clearHistory()
+    this.setState({
+      status: APP_STATUSES.DEFAULT,
+      color: black,
+      searches: []
+    })
   }
 
   render () {
@@ -91,7 +108,7 @@ export default class App extends React.Component {
           <Form onSubmit={this.handleSearch} placeholder='Location name' />
         </View>
         <View style={styles.history}>
-          { searches.length > 0 && <History data={searches} /> }
+          { searches.length > 0 && <History data={searches} handleReset={this.handleReset} /> }
         </View>
       </View>
     )

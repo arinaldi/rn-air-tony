@@ -60,6 +60,7 @@ class Form extends Component {
             value={text}
             placeholder={placeholder}
             onChangeText={this.onChangeText}
+            onSubmitEditing={this.handleSubmit}
           />
         </View>
         <TouchableOpacity
