@@ -1,9 +1,9 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, ScrollView } from 'react-native'
 import AppStatusBar from './components/AppStatusBar'
 import Form from './components/Form'
 import History from './components/History'
-import { white, green, red, black } from './utils/colors'
+import { teal, green, red, black } from './utils/colors'
 import { getHistory, saveToHistory, clearHistory } from './utils/helpers'
 import { geocodeGoogle, breezoMeter } from './api'
 import { APP_STATUSES, DATA_STATUSES } from './constants'
@@ -100,17 +100,19 @@ export default class App extends React.Component {
     const { status, color, searches } = this.state
 
     return (
-      <View style={styles.container}>
-        <AppStatusBar backgroundColor={white} barStyle='dark-content' />
-        <Text style={styles.title}>Air Tony</Text>
-        <Text style={[styles.status, { color }]}>{status}</Text>
-        <View style={styles.form}>
-          <Form onSubmit={this.handleSearch} placeholder='Location name' />
+      <ScrollView>
+        <View style={styles.container}>
+          <AppStatusBar backgroundColor={teal} barStyle='dark-content' />
+          <Text style={styles.title}>Air Tony</Text>
+          <Text style={[styles.status, { color }]}>{status}</Text>
+          <View style={styles.form}>
+            <Form onSubmit={this.handleSearch} placeholder='Location name' />
+          </View>
+          <View style={styles.history}>
+            {searches.length > 0 && <History data={searches} handleReset={this.handleReset} />}
+          </View>
         </View>
-        <View style={styles.history}>
-          { searches.length > 0 && <History data={searches} handleReset={this.handleReset} /> }
-        </View>
-      </View>
+      </ScrollView>
     )
   }
 }

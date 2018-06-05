@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { TextInput, StyleSheet, View, Text, TouchableOpacity } from 'react-native'
+import { TextInput, StyleSheet, View, Text, TouchableOpacity, Platform } from 'react-native'
 import PropTypes from 'prop-types'
 import { white, teal, gray } from '../utils/colors'
 
@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     height: 40,
-    borderBottomWidth: 1,
+    borderBottomWidth: Platform.OS === 'ios' ? 1 : 0,
     borderColor: gray,
     marginTop: 15,
     marginBottom: 15
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
   submitBtn: {
     backgroundColor: teal,
     padding: 10,
-    borderRadius: 4,
+    borderRadius: Platform.OS === 'ios' ? 4 : 2,
     height: 40
   },
   submitBtnText: {
